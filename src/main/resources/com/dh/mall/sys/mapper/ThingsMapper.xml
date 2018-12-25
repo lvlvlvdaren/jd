@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dh.mall.sys.mapper.ThingsMapper">
+	<!-- Result Map -->
+	<resultMap type="com.dh.mall.sys.model.ThingsModel" id="BaseResultMap">
+		<result column="id" property="id" />
+		<result column="ordercode" property="ordercode" />
+		<result column="proname" property="proname" />
+		<result column="procount" property="procount" />
+		<result column="prices" property="prices" />
+	</resultMap>
+	<sql id="Base_Column_List">
+	id,(select order_code from jd.order where order_code=ordcode) as ordercode,
+	(select proname from jd.pro_info where procode=pro_code) as proname,order_count as procount,prices
+	</sql>
+	<select id="getList" parameterType="Object" resultMap="BaseResultMap">
+	select <include refid="Base_Column_List"/> from jd.order_pro where ordcode = #{ordercode}
+	</select>
+<!-- 	<delete id="deletImg" parameterType = "Object"> -->
+<!-- 	delete from jd.pro_img_info where id=#{id} -->
+<!-- 	</delete> -->
+<!-- 	<update id="update" parameterType="Object"> -->
+<!-- 	update jd.pro_img_info set img_style=#{style} where id = #{id} -->
+<!-- 	</update> -->
+	</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dh.mall.cust.mapper.CartMapper">
+  <!-- Result Map -->
+  <resultMap type="com.dh.mall.cust.model.CartModel" id="BaseResultMap">
+  <id property="id" column="id"/>
+<result property="count" column="count"/>
+<result property="total" column="total"/>
+<collection property="product" column="product" ofType="com.dh.mall.cust.model.ProductwebModel">
+<id property="id" column="proId"/>
+<result property="procode" column="procode"/>
+<result property="proname" column="proname"/>
+<result property="price" column="price"/>
+<result property="descr" column="descr"/>
+<result property="imgname" column="imgname"/>
+</collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+  id,sclassname,scode,descr,parentcode
+  </sql>
+  <insert id="addCart" parameterType="Object">
+  insert into jd.cart (user_account,pro_code,count,total)values(#{cust.account},#{product.procode},#{count},#{total})
+  </insert>
+  <select id="searchByCustAccountAndProcode" resultMap = "BaseResultMap" parameterType = "Object">
+  select * from jd.cart where user_account = #{cust.account} and pro_code = #{product.procode}
+  </select>
+  <select id="seachCountByUserAccount" resultType="int" parameterType = "Object">
+  select count(*) from jd.cart where user_account = #{account}
+  </select>
+  <update id="updateCart" parameterType = "Object">
+  update jd.cart set count = #{count},total = #{total} where pro_code = #{product.procode} 
+  </update>
+  <select id="searchGoodsByUser" resultMap = "BaseResultMap" parameterType = "Object">
+select c.*,pi.procode procode,pi.proname as proname,pi.price as price,pi.descr as descr,
+pii.pro_info_id,pii.url as imgname,pii.id as imgid from jd.cart as c 
+inner join jd.user as user on user.account=c.user_account
+inner join jd.pro_info as pi on pi.procode = c.pro_code
+inner join jd.pro_img_info as pii on pii.pro_info_id = pi.id
+where user_account = #{custAccount}
+  </select>
+  <delete id="deletePro" parameterType = "Object">
+  delete from cart where pro_code=#{procode}
+  </delete>
+  <select id="searchPriceByCartId" resultMap = "BaseResultMap" parameterType = "Object">
+  select jp.* from jd.cart as jc left join jd.pro_info as jp on pro_code = jp.procode where jc.id = #{id}
+  </select>
+  <update id="updateTotalIncart" parameterType = "Object">
+  update jd.cart set total = #{total}, count = #{count} where id = #{id}
+  </update>
+  <select id="searchCountAndTotalById" resultMap = "BaseResultMap" parameterType = "Object">
+    SELECT c.id as id,c.user_account as user_Account,count as count,
+	total as total,pro_code as procode from jd.cart as c 
+	LEFT JOIN jd.pro_info as p on pro_code=p.procode 
+	where c.id=#{id}
+  </select>
+  </mapper>

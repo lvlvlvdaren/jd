@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dh.mall.cust.mapper.ProductwebMapper">
+	<!-- Result Map -->
+	<resultMap type="com.dh.mall.cust.model.ProductwebModel" id="BaseResultMap">
+		<result column="id" property="id" />
+		<result column="procode" property="procode" />
+		<result column="proname" property="proname" />
+		<result column="price" property="price" />
+		<result column="descr" property="descr" />
+		<result column="amount" property="amount" />
+		<result column="state" property="state" />
+		<result column="proclass1" property="proclass1" />
+		<result column="proclass2" property="proclass2" />
+		<result column="proclassname" property="proclassname" />
+		<result column="rowStart" property="rowStart" />
+		<result column="pageLimit" property="pageLimit" />
+		<result column="url" property="imgname" />
+	</resultMap>
+	<!-- table all fields sql片段 -->
+	<!-- <sql id = "Base_Column_List"> -->
+	<!-- id,procode,proname,price,descr,amount,state,scode -->
+	<!-- (select sclassname from jd.secondlist where scode = #{proclass1}) as 
+		sclass2name, -->
+	<!-- (select sclassname from jd.secondlist where parentcode = #{proclass2}) 
+		as sclass1name -->
+	<!-- </sql> -->
+<!-- 	(select proclassname from jd.secondlist where scode = #{proclass2}) -->
+	<sql id="Base_Coumn_aList">
+		id,procode,proname,price,descr,amount,state,
+<!-- 		(select sclassname from jd.secondlist where scode = class_id) as proclassname, -->
+<!-- 		class_id as proclass1, -->
+<!-- 		(select parentcode from jd.secondlist where scode = proclass1) as proclass2, -->
+<!-- 		(select sclassname from jd.secondlist where scode = proclass2) as proclassname, -->
+		(select url from jd.pro_img_info where jd.pro_img_info.pro_info_id = jd.pro_info.id and jd.pro_img_info.img_style = '1') url
+		
+	</sql>
+	<sql id="Exampl_Where_aClause">
+		where 1=1
+		<if test="null != procode and procode != ''">
+			and procode like CONCAT('%',#{procode},'%')
+		</if>
+		<if test="null !=proname and proname != ''">
+			and proname like CONCAT('%',#{proname},'%')
+		</if>
+		<if test="null !=proclass2 and proclass2 != ''">
+		and class_id like CONCAT('%',#{proclass2},'%')
+		</if>
+	</sql>
+
+
+<!-- 	<sql id="Base_Coumn_sList"> -->
+<!-- 		scode as proclass1,parentcode as proclass2,sclassname as proclassname -->
+<!-- 	</sql> -->
+<!-- 	<sql id="Exampl_Where_sClause"> -->
+<!-- 		where 1=1 -->
+<!-- 		<if test="null !=proclass1 and proclass1 != ''"> -->
+<!-- 			and scode = #{proclass1} -->
+<!-- 		</if> -->
+<!-- 		<if test="null !=proclass2 and proclass2!= ''"> -->
+<!-- 			and parentcode=#{proclass2} -->
+<!-- 		</if> -->
+<!-- 		<if test="null != proclassname and proclassname != ''"> -->
+<!-- 			and sclassname = #{proclassname} -->
+<!-- 		</if> -->
+<!-- 	</sql> -->
+	<!-- 查询条件 -->
+	<!-- <sql id="Example_Where_Clause"> -->
+	<!-- where 1=1 -->
+	<!-- <if test="null!=id"> -->
+	<!-- and id = #{id} -->
+	<!-- </if> -->
+	<!-- <if test=" null!= procode and procode != ''"> -->
+	<!-- and procode like CONCAT('%',#{procode},'%') -->
+	<!-- </if> -->
+	<!-- <if test="null != proname and proname != ''"> -->
+	<!-- and proname like CONCAT('%',#{proname},'%') -->
+	<!-- </if> -->
+	<!-- <if test = "null!=parentcode and parentcode != ''"> -->
+	<!-- and parentcode like CONCAT("%"+#{parentcode}+"%") -->
+	<!-- </if> -->
+	<!-- <if test = "null!=descr and descr!= ''"> -->
+	<!-- and descr = CONCAT("%"+#{descr}+"%") -->
+	<!-- </if> -->
+	<!-- </sql> -->
+<!-- 	<insert id="insert" parameterType="Object"> -->
+<!-- 		insert into jd.pro_info -->
+<!-- 		(procode,proname,price,descr,amount,state,class_id)value(#{procode},#{proname},#{price},#{descr},#{amount},#{state},#{proclass2}) -->
+<!-- 	</insert> -->
+	<select id="searchByName" parameterType="Object" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Coumn_aList" />
+		from jd.pro_info
+		<include refid="Exampl_Where_aClause" />
+	</select>
+<!-- 	<select id="searchByName" parameterType="Object" resultMap="BaseResultMap"> -->
+<!-- 		select * from jd.pro_info where procode = #{procode} -->
+<!-- 	</select> -->
+	
+	<!-- <select id="selectScoden" parameterType = "Object" resultMap = "BaseResultMap"> -->
+	<!-- select sclassname,scode from jd.secondlist where parentcode = #{parentcode} -->
+	<!-- </select> -->
+	<!-- <insert id="insert" parameterType="Object"> -->
+	<!-- insert into jd.secondlist (sclassname,scode,descr,parentcode)value(#{sclassname},#{scode},#{descr},#{parentcode}) -->
+	<!-- </insert> -->
+<!-- 	<delete id="del" parameterType="Object"> -->
+<!-- 	delete from jd.pro_info where id = #{id} -->
+<!-- 	</delete> -->
+	<!-- <delete id="deleteModel" parameterType = "Object"> -->
+	<!-- delete from jd.user <include refid="Example_Where_Clause" /> -->
+
+	<!-- </delete> -->
+<!-- 	<update id="updByProcode" parameterType = "Object"> -->
+<!-- 	update jd.pro_info set proname = #{proname},price=#{price},descr=#{descr},amount=#{amount},state=#{state},class_id=#{proclass2} -->
+<!-- 		where procode = #{procode} -->
+<!-- 	</update> -->
+	<!-- 修改记录，只修改不为空的字段 -->
+	<!-- <update id="updateActive" parameterType = "Object"> -->
+	<!-- update jd.user set -->
+	<!-- <trim suffixOverrides=","> -->
+	<!-- <if test="name != null and name != ''"> -->
+	<!-- name = #{name}, -->
+	<!-- </if> -->
+	<!-- <if test="password != null and password != ''"> -->
+	<!-- password = #{password} -->
+	<!-- </if> -->
+	<!-- </trim> -->
+	<!-- where account = #{account} -->
+	<!-- </update> -->
+	<!-- 根据查询 系统用户 -->
+	<select id="selectById" resultMap = "BaseResultMap" parameterType = 
+		"Object">
+	select <include refid="Base_Coumn_aList" />
+	from jd.pro_info where id = #{id}
+	</select>
+	<!-- <select id = "selectList" resultMap = "BaseResultMap" parameterType 
+		= "Object"> -->
+	<!-- select <include refid = "Base_Column_List" /> from jd.user -->
+	<!-- </select> -->
+	<select id="selectCount" resultType="java.lang.Integer" parameterType="Object">
+		select count(*) from jd.pro_info <include refid="Exampl_Where_aClause" />
+	</select>
+<!-- 	查询系统用户列表 -->
+	<select id="selectModel" resultMap="BaseResultMap"
+		parameterType="Object">
+		select
+		<include refid="Base_Coumn_aList" />
+		from jd.pro_info
+		<include refid="Exampl_Where_aClause" />
+		limit
+		<if test="(rowStart != null and rowStart != '' or rowStart==0) and pageLimit != null and pageLimit != ''">
+			${rowStart},${pageLimit}
+		</if>
+	</select>
+	<!-- <if test="pageLimit != null and pageLimit != ''"> -->
+	<!-- ${pageLimit} -->
+	<!-- </if> -->
+
+</mapper>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.dh.mall.sys.mapper.UserMapper">
+  <!-- Result Map -->
+  <resultMap type="com.dh.mall.sys.model.UserModel" id="BaseResultMap">
+  <result column = "id" property = "id"/>
+  <result column = "account" property = "account"/>
+  <result column = "name" property = "name"/>
+  <result column = "password" property = "password"/>
+  <result column = "manage" property = "manage"/>
+  <result column = "rowStart" property = "rowStart"/>
+  <result column = "pageLimit" property = "pageLimit"/>
+  </resultMap>
+<!--   table all fields sql片段 -->
+<sql id = "Base_Column_List">
+id,account,name,password,manage
+</sql>
+<!-- 查询条件 -->
+<sql id="Example_Where_Clause">
+where 1=1
+<if test="null!=id">
+and id = #{id}
+</if>
+<if test=" null!= account and account != ''">
+and account like CONCAT('%',#{account},'%')
+</if>
+<if test="null !=name  and name != ''">
+and name like CONCAT('%',#{name},'%')
+</if>
+<if test = "null!=password   and password != ''">
+and password = #{password}
+</if>
+<if test = "null!=manage  and manage!= ''">
+and manage = #{manage}
+</if>
+</sql>
+<insert id="insert" parameterType="Object">
+insert into jd.user (account,name,password,manage)value(#{account},#{name},#{password},#{manage})
+</insert>
+<delete id="delUser" parameterType="Object">
+delete from jd.user where account = #{account}
+</delete>
+<!-- <delete id="deleteModel" parameterType = "Object"> -->
+<!-- delete from jd.user <include refid="Example_Where_Clause" /> -->
+
+<!-- </delete> -->
+<!-- <update id="update" parameterType = "Object"> -->
+<!-- update jd.user set name = #{name},password=#{password} where account = #{account} -->
+<!-- </update> -->
+<!-- 修改记录，只修改不为空的字段 -->
+<update id="updateActive" parameterType = "Object">
+update jd.user set
+<trim suffixOverrides=",">
+<if test="name != null and name != ''">
+name = #{name},
+</if>
+<if test="password != null and password != ''">
+password = #{password}
+</if>
+</trim>
+where account = #{account}
+</update>
+<!-- 根据查询 系统用户 -->
+<select id="searchByAccount" resultMap = "BaseResultMap" parameterType = "Object">
+select <include refid="Base_Column_List" />
+from jd.user where account = #{account}
+</select>
+<select id = "selectList" resultMap = "BaseResultMap" parameterType = "Object">
+select <include refid = "Base_Column_List" /> from jd.user
+</select>
+<select id="selectCount"  resultType = "java.lang.Integer" parameterType = "Object">
+select count(*) from jd.user  <include refid="Example_Where_Clause"/> 
+
+</select>
+<!-- 查询系统用户列表 -->
+<select id="selectModel" resultMap = "BaseResultMap" parameterType = "Object">
+select <include refid="Base_Column_List" />
+from jd.user <include refid="Example_Where_Clause" /> limit
+<!-- 		<if test="(rowStart != null and rowStart != '' or rowStart==0) and pageLimit != null and pageLimit != ''"> -->
+			${rowStart},${pageLimit}
+<!-- 		</if> -->
+<!-- 		, -->
+<!-- 		<if test="pageLimit != null and pageLimit != ''"> -->
+<!-- 			${pageLimit} -->
+<!-- 		</if> -->
+</select>
+<!-- 查询系统用户列表 -->
+<!-- <select id="selectAll" resultMap = "BaseResultMap" parameterType = "Object"> -->
+<!-- select <include refid="Base_Column_List" /> -->
+<!-- from jd.user <include refid="Example_Where_Clause" /> -->
+<!-- 		<if test="pager.orderCondition != null and pager.orderCondition != ''"> -->
+<!-- 			${pager.orderCondition} -->
+<!-- 		</if> -->
+<!-- </select> -->
+
+  </mapper>

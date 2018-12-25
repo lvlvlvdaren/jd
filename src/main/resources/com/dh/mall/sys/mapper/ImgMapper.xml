@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dh.mall.sys.mapper.ImgMapper">
+	<!-- Result Map -->
+	<resultMap type="com.dh.mall.sys.model.ImgModel" id="BaseResultMap">
+		<result column="id" property="id" />
+		<result column="url" property="url" />
+		<result column="img_style" property="style" />
+		<result column="pro_info_id" property="proid" />
+	</resultMap>
+	<insert id="insert" parameterType = "Object">
+	insert into jd.pro_img_info (url,img_style,pro_info_id)value(#{url},#{style},#{proid})
+	</insert>
+	<select id="select" parameterType="Object" resultMap="BaseResultMap">
+	select * from jd.pro_img_info where pro_info_id like #{proid}
+	</select>
+	<delete id="deletImg" parameterType = "Object">
+	delete from jd.pro_img_info where id=#{id}
+	</delete>
+	<update id="update" parameterType="Object">
+	update jd.pro_img_info set img_style=#{style} where id = #{id}
+	</update>
+	</mapper>

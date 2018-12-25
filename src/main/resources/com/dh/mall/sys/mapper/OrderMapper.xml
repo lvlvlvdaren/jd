@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.dh.mall.sys.mapper.OrderMapper">
+  <!-- Result Map -->
+  <resultMap type="com.dh.mall.sys.model.OrderModel" id="BaseResultMap">
+  <result column = "id" property = "id"/>
+  <result column = "order_code" property = "ordcode"/>
+  <result column = "username" property = "username"/>
+  <result column = "time" property = "time"/>
+  <result column = "addr_id" property = "addr"/>
+  <result column = "state" property = "state"/>
+   <result column = "ordcoden" property = "ordcoden"/>
+  <result column = "rowStart" property = "rowStart"/>
+  <result column = "pageLimit" property = "pageLimit"/>
+  </resultMap>
+<!--   table all fields sql片段 -->
+<sql id = "Base_Column_List">
+id,order_code,(select name from jd.user where account =user_account ) as username,time,addr_id,state
+</sql>
+<!-- 查询条件 -->
+<sql id="Example_Where_Clause">
+where 1=1
+<if test="null!=id">
+and id = #{id}
+</if>
+<if test=" null!= ordcode and ordcode != ''">
+and order_code like CONCAT('%',#{ordcode},'%')
+</if>
+<if test="null !=username  and username != ''">
+and username like CONCAT('%',#{username},'%')
+</if>
+</sql>
+<!-- <if test = "null!=parentcode   and parentcode != ''"> -->
+<!-- and parentcode like CONCAT("%"+#{parentcode}+"%") -->
+<!-- </if> -->
+<!-- <if test = "null!=descr  and descr!= ''"> -->
+<!-- and descr = CONCAT("%"+#{descr}+"%") -->
+<!-- </if> -->
+
+<select id="sel" parameterType = "Object" resultMap = "BaseResultMap">
+select ordcode as ordcoden from jd.order_pro where  ordcode = #{ordcode}
+</select>
+<delete id="del" parameterType="Object">
+delete  from jd.order where order_code = #{ordcode} 
+</delete>
+<delete id="deln" parameterType = "Object">
+delete from jd.order_pro where ordcode = #{ordcode}
+</delete>
+<!-- <update id="updByScode" parameterType = "Object"> -->
+<!-- update jd.secondlist set sclassname = #{sclassname},parentcode=#{parentcode},descr=#{descr} where scode = #{scode} -->
+<!-- </update> -->
+<!-- 修改记录，只修改不为空的字段 -->
+<!-- <update id="updateActive" parameterType = "Object"> -->
+<!-- update jd.user set -->
+<!-- <trim suffixOverrides=","> -->
+<!-- <if test="name != null and name != ''"> -->
+<!-- name = #{name}, -->
+<!-- </if> -->
+<!-- <if test="password != null and password != ''"> -->
+<!-- password = #{password} -->
+<!-- </if> -->
+<!-- </trim> -->
+<!-- where account = #{account} -->
+<!-- </update> -->
+<!-- 根据查询 系统用户 -->
+<!-- <select id="selectById" resultMap = "BaseResultMap" parameterType = "Object"> -->
+<!-- select <include refid="Base_Column_List" /> -->
+<!-- from jd.secondlist where id = #{id} -->
+<!-- </select> -->
+<!-- <select id = "selectList" resultMap = "BaseResultMap" parameterType = "Object"> -->
+<!-- select <include refid = "Base_Column_List" /> from jd.user -->
+<!-- </select> -->
+<select id="selectCount"  resultType = "java.lang.Integer" parameterType = "Object">
+select count(*) from jd.order  <include refid="Example_Where_Clause"/> 
+
+</select>
+<!-- 查询系统用户列表 -->
+<select id="selectModel" resultMap = "BaseResultMap" parameterType = "Object">
+select <include refid="Base_Column_List" />
+from jd.order <include refid="Example_Where_Clause" /> limit
+		<if test="(rowStart != null and rowStart != '' or rowStart==0) and pageLimit != null and pageLimit != ''">
+			${rowStart},${pageLimit}
+		</if>
+</select>		
+
+
+  </mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dh.mall.cust.mapper.OrderwebMapper">
+	<resultMap type="com.dh.mall.cust.model.OrderwebModel" id="BaseResultMap">
+		<id property="id" column="id" />
+		<result property="ordcode" column="ordcode" />
+	    <result property="mcount" column="mcount" />
+		<result property="total" column="total" />
+		
+		<association property="cust"  javaType="com.dh.mall.cust.model.CustModel">
+			<id property="id" column="uId" />
+			<result property="account" column="account" />
+		</association>
+		
+		<collection property="product"  ofType="com.dh.mall.cust.model.ProductwebModel">
+		<id property="id" column="proId" />
+			<result property="procode" column="procode" />
+			<result property="proname" column="proname" />
+			<result property="price" column="price" />
+			<result property="descr" column="descr" />
+			<result property="imgname" column="imgname" />
+		</collection>
+	</resultMap>
+	
+	<select id="searchAllByCust" parameterType="Object" resultMap = "BaseResultMap">
+	select jo.id as id,jo.order_code as ordcode, jo.total as total,jpi.id as proId, jpi.procode as procode, 
+	jpi.proname as proname, jpi.price as price,
+	jpi.descr as descr, jpo.pro_code mprocode,jpo.ord_code as mordcode,jpo.count as mcount, 
+	pii.url as imgname, pii.pro_info_id,
+	ju.id as uId,ju.name as uname,ju.account as account from jd.order as jo 
+	
+	left join jd.products_order as jpo on jo.order_code=jpo.ord_code
+	left join jd.pro_info as jpi on jpo.pro_code = jpi.procode
+	left join jd.pro_img_info as pii on pii.pro_info_id = jpi.id
+	left join jd.user as ju on ju.account = jo.user_account
+	
+	where user_account = #{account}
+	</select>
+	<insert id="addOrder" parameterType="Object">
+	insert into jd.order (order_code,user_account,total)values(#{ordcode},#{cust.account},#{total})
+	</insert>
+	<select id="searchLastId" parameterType="Object" resultMap = "BaseResultMap">
+	select  id, order_code as ordcode, user_account, total from jd.order where id = (select max(id) from jd.order)
+	</select>
+	<insert id="addOrderMap" >
+	insert into jd.products_order (pro_code,ord_code,count)values(#{procode},#{ordcode},#{count})
+	</insert>
+	
+</mapper>
